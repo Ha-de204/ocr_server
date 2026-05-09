@@ -14,13 +14,17 @@ if platform.system() == "Windows":
 
 app = FastAPI()
 
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
+
 # PREPROCESS
 def preprocess_image(file_bytes):
     np_arr = np.frombuffer(file_bytes, np.uint8)
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
     # resize giống sharp
-    img = cv2.resize(img, None, fx=1.5, fy=1.5)
+    img = cv2.resize(img, None, fx=1.2, fy=1.2)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
@@ -290,7 +294,7 @@ async def scan_receipt(file: UploadFile = File(...)):
 
     img = preprocess_image(contents)
 
-    config = r'--oem 3 --psm 4'
+    config = r'--oem 3 --psm 6'
     text = pytesseract.image_to_string(img, lang='eng+vie', config=config)
 
     amount = extract_amount(text)
