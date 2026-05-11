@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import re
 import unicodedata
+import gc
 import platform
 from datetime import datetime
 
@@ -24,7 +25,7 @@ def preprocess_image(file_bytes):
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
     # resize giống sharp
-    img = cv2.resize(img, None, fx=1.5, fy=1.5)
+    img = cv2.resize(img, None, fx=2.0, fy=2.0)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
@@ -117,7 +118,8 @@ def extract_title(text):
 
 # AMOUNT
 def extract_amount(text):
-    clean_text = re.sub(r'(?<=\d)\s+(?=\d)', '', text)
+    clean_text = text.replace('O', '0').replace('o', '0').replace('I', '1')
+    clean_text = re.sub(r'(?<=\d)\s+(?=\d)', '', clean_text)
     lines = clean_text.split("\n")
 
     anchors = [
@@ -290,24 +292,32 @@ def suggest_category(text):
 # API
 @app.post("/scan")
 async def scan_receipt(file: UploadFile = File(...)):
-    contents = await file.read()
+    try:
+        contents = await file.read()
 
-    img = preprocess_image(contents)
+        img = preprocess_image(contents)
 
-    config = r'--oem 3 --psm 6'
-    text = pytesseract.image_to_string(img, lang='eng+vie', config=config)
+        config = r'--oem 3 --psm 4'
+        text = pytesseract.image_to_string(img, lang='eng+vie', config=config)
 
-    amount = extract_amount(text)
-    date = extract_date(text)
-    category = suggest_category(text)
-    title = extract_title(text)
+        amount = extract_amount(text)
+        date = extract_date(text)
+        category = suggest_category(text)
+        title = extract_title(text)
 
-    return {
-        "amount": amount,
-        "type": "expense",
-        "title": title,
-        "note": "OCR auto",
-        "date": date,
-        "category_name": category,
-        "raw_text": text
-    }
+        # giải phóng bộ nhớ
+        del img
+        del contents
+        gc.collect()
+
+        return {
+            "amount": amount,
+            "type": "expense",
+            "title": title,
+            "note": "OCR auto",
+            "date": date,
+            "category_name": category,
+            "raw_text": text
+        }
+    except Exception as e:
+        return {"error": str(e)}
