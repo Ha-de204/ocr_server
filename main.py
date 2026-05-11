@@ -24,14 +24,17 @@ def preprocess_image(file_bytes):
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
     # resize giống sharp
-    img = cv2.resize(img, None, fx=1.2, fy=1.2)
+    height, width = img.shape[:2]
+    img = cv2.resize(img, (width*2, height*2), interpolation=cv2.INTER_CUBIC)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    gray = clahe.apply(gray)
 
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    # khử nhiễu
+    gray = cv2.medianBlur(gray, 3)
 
-    _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
     return thresh
 
