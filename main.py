@@ -7,10 +7,10 @@ import unicodedata
 import platform
 from datetime import datetime
 
-if platform.system() == "Windows":
-    pytesseract.pytesseract.tesseract_cmd = (
-        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    )
+#if platform.system() == "Windows":
+    #pytesseract.pytesseract.tesseract_cmd = (
+       #r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    #)
 
 app = FastAPI()
 
