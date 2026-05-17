@@ -297,7 +297,7 @@ async def scan_receipt(file: UploadFile = File(...)):
 
         img = preprocess_image(contents)
 
-        config = r'--oem 3 --psm 4'
+        config = r'--oem 3 --psm 6'
         text = pytesseract.image_to_string(img, lang='eng+vie', config=config)
 
         amount = extract_amount(text)
