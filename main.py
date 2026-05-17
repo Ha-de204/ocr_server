@@ -25,7 +25,7 @@ def preprocess_image(file_bytes):
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
     # resize giống sharp
-    img = cv2.resize(img, None, fx=2.0, fy=2.0)
+    img = cv2.resize(img, None, fx=1.5, fy=1.5)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
