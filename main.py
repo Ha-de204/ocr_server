@@ -25,12 +25,12 @@ def preprocess_image(file_bytes):
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
     # resize giống sharp
-    img = cv2.resize(img, None, fx=1.5, fy=1.5)
+    img = cv2.resize(img, None, fx=1.2, fy=1.2)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
 
-    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    gray = cv2.GaussianBlur(gray, (3, 3), 0)
 
     _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
 
