@@ -295,10 +295,13 @@ def scan_receipt(file: UploadFile = File(...)):
     try:
         contents = file.file.read()
 
+        if not contents or len(contents) == 0:
+            return {"error": "File dữ liệu tải lên bị rỗng"}
+
         img = preprocess_image(contents)
 
-        config = r'--oem 3 --psm 11'
-        text = pytesseract.image_to_string(img, lang='eng', config=config)
+        config = r'--oem 3 --psm 6'
+        text = pytesseract.image_to_string(img, lang='eng+vie', config=config)
 
         amount = extract_amount(text)
         date = extract_date(text)
