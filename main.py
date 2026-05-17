@@ -291,9 +291,9 @@ def suggest_category(text):
 
 # API
 @app.post("/scan")
-async def scan_receipt(file: UploadFile = File(...)):
+def scan_receipt(file: UploadFile = File(...)):
     try:
-        contents = await file.read()
+        contents = file.file.read()
 
         img = preprocess_image(contents)
 
@@ -305,7 +305,6 @@ async def scan_receipt(file: UploadFile = File(...)):
         category = suggest_category(text)
         title = extract_title(text)
 
-        # giải phóng bộ nhớ
         del img
         del contents
         gc.collect()
