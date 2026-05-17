@@ -297,8 +297,8 @@ def scan_receipt(file: UploadFile = File(...)):
 
         img = preprocess_image(contents)
 
-        config = r'--oem 3 --psm 6'
-        text = pytesseract.image_to_string(img, lang='eng+vie', config=config)
+        config = r'--oem 3 --psm 11'
+        text = pytesseract.image_to_string(img, lang='eng', config=config)
 
         amount = extract_amount(text)
         date = extract_date(text)
