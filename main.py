@@ -8,10 +8,10 @@ import gc
 import platform
 from datetime import datetime
 
-#if platform.system() == "Windows":
-    #pytesseract.pytesseract.tesseract_cmd = (
-       #r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    #)
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = (
+       r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    )
 
 app = FastAPI()
 
@@ -146,7 +146,6 @@ def extract_amount(text):
     if potential:
         return max(potential)
 
-    # fallback
     all_matches = re.findall(r'\d{1,3}(?:[.,]\d{3})+(?:[.,]\d+)?', clean_text)
     numbers = [
         float(re.sub(r'[.,]', '', m))
